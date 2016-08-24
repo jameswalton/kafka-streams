@@ -5,10 +5,10 @@
   (:gen-class))
 
 (def props
-  {StreamsConfig/APPLICATION_ID_CONFIG,    "my-stream-processing-application"
-   StreamsConfig/BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"
-   StreamsConfig/KEY_SERDE_CLASS_CONFIG,   (.getName (.getClass (Serdes/String)))
-   StreamsConfig/VALUE_SERDE_CLASS_CONFIG, (.getName (.getClass (Serdes/String)))})
+  {StreamsConfig/APPLICATION_ID_CONFIG    "my-stream-processing-application"
+   StreamsConfig/BOOTSTRAP_SERVERS_CONFIG "localhost:9092"
+   StreamsConfig/KEY_SERDE_CLASS_CONFIG   (.getName (.getClass (Serdes/String)))
+   StreamsConfig/VALUE_SERDE_CLASS_CONFIG (.getName (.getClass (Serdes/String)))})
 
 (def config
   (StreamsConfig. props))
@@ -16,11 +16,11 @@
 (def builder
   (KStreamBuilder.))
 
-(def input-topic
+(def input-topics
   (into-array String ["my-input-topic"]))
 
 (->
-  (.stream builder input-topic)
+  (.stream builder input-topics)
   (.mapValues (reify ValueMapper (apply [_ v] ((comp str count) v))))
   (.to "my-output-topic"))
 
@@ -29,6 +29,4 @@
 
 (defn -main [& args]
   (prn "starting")
-  (.start streams)
-  (Thread/sleep (* 60000 10))
-  (prn "stopping"))
+  (.start streams))
